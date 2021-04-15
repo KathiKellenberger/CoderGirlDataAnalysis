@@ -2,7 +2,8 @@
 --Demo 1
 SELECT 'ab' + 'c';     
 
-SELECT 1 + 1 AS ADDITION, 10.0 / 3 AS DIVISION, 10 / 3 AS [Integer Division], 10 % 3 AS MODULO;      
+SELECT 1 + 1 AS ADDITION, 10.0 / 3 AS DIVISION, 
+10 / 3 AS [Integer Division], 10 % 3 AS MODULO;      
 
 
 SELECT BusinessEntityID, FirstName + ' ' + LastName AS [Full Name]    
@@ -14,8 +15,9 @@ FROM Person.Person;
 SELECT SalesOrderID, SalesOrderID + 10
 FROM Sales.SalesOrderHeader;
 
-SELECT BusinessEntityID, FirstName + ' ' + MiddleName +        
-	' ' + LastName AS [Full Name]    
+SELECT BusinessEntityID, 
+	FirstName, MiddleName, LastName 
+	,FirstName + ' ' + MiddleName +  	' ' + LastName AS [Full Name]    
 FROM Person.Person;  
 
 --Use ISNULL
@@ -47,16 +49,18 @@ FROM Production.Product;
 SELECT BusinessEntityID + LastName 
 FROM Person.Person;
 
-SELECT CAST(BusinessEntityID AS VARCHAR(10)) + LastName 
+SELECT BUSINESSEntityID, LastName, CAST(BusinessEntityID AS NVARCHAR(10)) + LastName 
 FROM Person.Person;
 
 --Convert 
-SELECT CONVERT(VARCHAR(10), BusinessEntityID) + LastName 
+SELECT CONVERT(NVARCHAR(10), BusinessEntityID) + LastName 
 FROM Person.Person;
 
 SELECT BusinessEntityID, BusinessEntityID + 1 AS "Adds 1",        
 	CAST(BusinessEntityID AS NVARCHAR(10)) + '1'AS "Appends 1"    
 FROM Person.Person; 
+DECLARE @Date DATE = '1/1/2021'
+SELECT CONVERT(varchar(10),@date,112)
 
 
 
@@ -104,7 +108,7 @@ WHERE BusinessEntityID IN (293,295,211,297,299,3057,15027);
 
 
  --Using the CHOOSE Function 
-SELECT CHOOSE (4, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'); 
+SELECT CHOOSE (4,'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'); 
 
 --Using the UPPER and LOWER Functions 
 SELECT LastName, UPPER(LastName) AS "UPPER",        
@@ -128,7 +132,7 @@ WHERE BusinessEntityID IN (285,293,10314);
 
 
 --Nesting Functions 
-SELECT EmailAddress,        
+SELECT EmailAddress,  CHARINDEX('@',EmailAddress) + 1,      
 	SUBSTRING(EmailAddress,CHARINDEX('@',EmailAddress) + 1,50) AS DOMAIN    
 FROM Production.ProductReview; 
 
@@ -157,7 +161,7 @@ WHERE SalesOrderID in (43659,43714,60621);
 SELECT OrderDate, GETDATE() CurrentDateTime,        
 	DATEDIFF(year,OrderDate,GETDATE()) AS YearDiff,        
 	DATEDIFF(month,OrderDate,GETDATE()) AS MonthDiff,        
-	DATEDIFF(d,OrderDate,GETDATE()) AS DayDiff    
+	DATEDIFF(day,OrderDate,GETDATE()) AS DayDiff    
 FROM Sales.SalesOrderHeader    
 WHERE SalesOrderID in (43659,43714,60621); 
 
@@ -203,6 +207,20 @@ SELECT DATEFROMPARTS(2012, 3, 10) AS RESULT;
 SELECT TIMEFROMPARTS(12, 10, 32, 0, 0) AS RESULT;    
 SELECT DATETIME2FROMPARTS (2012, 3, 10, 12, 10, 32, 0, 0) AS RESULT;    
 
+SELECT CASE WHEN YEAR(OrderDate) = '2011' Then '2011'
+	ELSE 'another year' END 
+from sales.SalesOrderHeader;
+
+
+CREATE TABLE #Files(path varchar(100))
+INSERT INTO #Files 
+VALUES
+    ('D:\documents\crochet\patterns\dolls\gwen.pdf');
+
+SELECT * FROM #FIles 
+
+SELECT PATH, RIGHT(PATH,CHARINDEX('\',REVERSE(PATH)) -1)
+from #files 
 
 
 
