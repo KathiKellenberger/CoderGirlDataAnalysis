@@ -83,26 +83,23 @@ ON c.CustomerID = s.CustomerID
 ORDER BY COUntOfSales desc;
 
 --Create and populate a temp table
-USE tempdb;
-GO
- 
-DROP TABLE IF EXISTS dbo.Employee;
-DROP TABLE IF EXISTS dbo.Contact;
-DROP TABLE IF EXISTS dbo.JobHistory;
+DROP TABLE IF EXISTS #Employee;
+DROP TABLE IF EXISTS #Contact;
+DROP TABLE IF EXISTS #JobHistory;
   
-CREATE TABLE [Employee](
+CREATE TABLE [#Employee](
         [EmployeeID] [int] NOT NULL,
         [ContactID] [int] NOT NULL,
         [ManagerID] [int] NULL,
         [Title] [nvarchar](50) NOT NULL);
  
-CREATE TABLE [Contact] (
+CREATE TABLE [#Contact] (
         [ContactID] [int] NOT NULL,
         [FirstName] [nvarchar](50) NOT NULL,
         [MiddleName] [nvarchar](50) NULL,
         [LastName] [nvarchar](50) NOT NULL);
  
-CREATE TABLE JobHistory(
+CREATE TABLE #JobHistory(
     EmployeeID INT NOT NULL, 
     EffDate DATE NOT NULL, 
     EffSeq INT NOT NULL,
@@ -117,7 +114,7 @@ CREATE TABLE JobHistory(
  
 GO
   
-INSERT INTO dbo.Contact (ContactID, FirstName, MiddleName, LastName) VALUES 
+INSERT INTO #Contact (ContactID, FirstName, MiddleName, LastName) VALUES 
         (1030,'Kevin','F','Brown'),
         (1009,'Thierry','B','DHers'),
         (1028,'David','M','Bradley'),
@@ -148,7 +145,7 @@ INSERT INTO dbo.Contact (ContactID, FirstName, MiddleName, LastName) VALUES
         (1064, 'Lori', 'A', 'Kane'),
         (1287, 'Ken', 'J', 'Sanchez');
  
-INSERT INTO dbo.Employee (EmployeeID, ContactID, ManagerID, Title) VALUES 
+INSERT INTO #Employee (EmployeeID, ContactID, ManagerID, Title) VALUES 
         (1, 1209, 16,'Production Technician - WC60'),
         (2, 1030, 6,'Marketing Assistant'),
         (3, 1002, 12,'Engineering Manager'),
@@ -182,7 +179,7 @@ INSERT INTO dbo.Employee (EmployeeID, ContactID, ManagerID, Title) VALUES
         (197, 1064, 21, 'Production Supervisor - WC45'),
         (263, 1007, 3, 'Senior Tool Designer');       
  
-INSERT INTO JobHistory(EmployeeID, EffDate, EffSeq, EmploymentStatus, 
+INSERT INTO #JobHistory(EmployeeID, EffDate, EffSeq, EmploymentStatus, 
     JobTitle, Salary, ActionDesc)
 VALUES 
     (1000,'07-31-2018',1,'A','Intern',2000,'New Hire'),
@@ -202,20 +199,22 @@ WITH
 Emp AS(
     SELECT e.EmployeeID, e.ManagerID,e.Title AS EmpTitle,
         c.FirstName + ISNULL(' ' + c.MiddleName,'') + ' ' + c.LastName AS EmpName
-    FROM dbo.Employee AS e
-    INNER JOIN dbo.Contact AS c
+    FROM #Employee AS e
+    INNER JOIN #Contact AS c
     ON e.ContactID = c.ContactID 
     ),
 Mgr AS(
     SELECT e.EmployeeID AS ManagerID,e.Title AS MgrTitle,
         c.FirstName + ISNULL(' ' + c.MiddleName,'') + ' ' + c.LastName AS MgrName
-    FROM dbo.Employee AS e
-    INNER JOIN dbo.Contact AS c
+    FROM #Employee AS e
+    INNER JOIN #Contact AS c
     ON e.ContactID = c.ContactID 
     )
 SELECT EmployeeID, Emp.ManagerID, EmpName, EmpTitle, MgrName, MgrTitle
 FROM Emp INNER JOIN Mgr ON Emp.ManagerID = Mgr.ManagerID
 ORDER BY EmployeeID;
+
+
 
 
 --A CTE can call another CTE
