@@ -1,6 +1,6 @@
 /*
-Replace instructor with your username
-
+Replace instructor with your username (do a CTRL + H)
+Replace database name with your class junk database
 
 */
 
@@ -26,14 +26,13 @@ CREATE TABLE instructor.demoCustomer(CustomerID INT NOT NULL,
 DROP TABLE IF EXISTS [instructor].[demoProduct];
 GO
  
-SELECT * INTO instructor.demoProduct FROM AdventureWorks2019.Production.Product;
+SELECT * INTO instructor.demoProduct 
+FROM AdventureWorks2019.Production.Product;
  
-DROP TABLE IF EXISTS [Instructor].[demoCustomer];
-GO
-SELECT CustomerID, LastName, FirstName, MiddleName 
-INTO Instructor.demoCustomer
-FROM AdventureWorks2019.Sales.Customer AS C
-JOIN AdventureWorks2019.Person.Person AS P ON C.CustomerID = P.BusinessEntityID;
+SELECT * 
+FROM Instructor.demoCustomer;
+
+
 
 --Adding One Row at a Time with Literal Values
 
@@ -78,19 +77,15 @@ SELECT * FROM instructor.demoCustomer;
 
 
 --Attempting to Insert Rows with Invalid INSERT Statements
-PRINT '1';
 --1
 INSERT INTO instructor.demoCustomer (CustomerID, FirstName, MiddleName, LastName)
 VALUES (1, N'Dominic', N'P.', N'Gash');
  
-PRINT '2';
 --2
 INSERT INTO instructor.demoCustomer (CustomerID, MiddleName, LastName)
 VALUES (10, N'M.', N'Garza');
  
-GO
-PRINT '3';
-GO
+
  
 
  --Inserting Multiple Rows with One INSERT
@@ -103,6 +98,7 @@ UNION ALL
 SELECT 11, N'Katherine', NULL, N'Harding';
  
 --2
+--This is better!
 INSERT INTO instructor.demoCustomer (CustomerID, FirstName, MiddleName, LastName)
 VALUES (12, N'Johnny', N'A.', N'Capino'),
        (16, N'Christopher', N'R.', N'Beck'),
@@ -118,13 +114,13 @@ WHERE CustomerID >=7;
 --1
 INSERT INTO instructor.demoCustomer (CustomerID, FirstName, MiddleName, LastName)
 SELECT BusinessEntityID, FirstName, MiddleName, LastName
-FROM Person.Person
+FROM AdventureWorks2019.Person.Person
 WHERE BusinessEntityID BETWEEN 19 AND 35;
 --2
 INSERT INTO instructor.demoCustomer (CustomerID, FirstName, MiddleName, LastName)
 SELECT DISTINCT s.SalesOrderID, c.FirstName, c.MiddleName, c.LastName
-FROM Person.Person AS c
-INNER JOIN Sales.SalesOrderHeader AS s ON c.BusinessEntityID = s.SalesPersonID;
+FROM AdventureWorks2019.Person.Person AS c
+INNER JOIN AdventureWorks2019.Sales.SalesOrderHeader AS s ON c.BusinessEntityID = s.SalesPersonID;
 
 SELECT CustomerID, FirstName, MiddleName, LastName
 FROM instructor.demoCustomer
@@ -138,7 +134,7 @@ FROM instructor.demoCustomer;
 --2
 INSERT INTO instructor.demoCustomer (CustomerID, FirstName, MiddleName, LastName)
 SELECT c.BusinessEntityID, c.FirstName, c.MiddleName, c.LastName
-FROM Person.Person AS c
+FROM AdventureWorks2019.Person.Person AS c
 WHERE NOT EXISTS (
     SELECT 1 FROM instructor.demoCustomer a
     WHERE a.CustomerID = c.BusinessEntityID);
@@ -182,11 +178,11 @@ DROP TABLE IF EXISTS instructor.demoSalesOrderDetail;
 DROP TABLE IF EXISTS instructor.demoSalesOrderHeader;
 
 SELECT * INTO instructor.demoSalesOrderDetail 
-FROM Sales.SalesOrderHeader;
-SELECT * INTO instructor.demosSalesOrderHeader
-FROM Sales.SalesOrderDetail;
+FROM AdventureWorks2019.Sales.SalesOrderDetail;
+SELECT * INTO instructor.demoSalesOrderHeader
+FROM AdventureWorks2019.Sales.SalesOrderHeader;
 
-SELECT d.SalesOrderID, SalesOrderNumber
+SELECT d.SalesOrderID, h.SalesOrderNumber
 FROM instructor.demoSalesOrderDetail AS d
 INNER JOIN instructor.demoSalesOrderHeader 
 AS h ON d.SalesOrderID = h.SalesOrderID
@@ -248,7 +244,8 @@ SET FirstName = 'John', LastName = 'Smith'
 WHERE BusinessEntityID = 19;
 
 SELECT * 
-FROM instructor.demoCustomer;
+FROM instructor.demoCustomer
+WHERE BusinessEntityID = 19;
 
 
 DROP TABLE IF EXISTS instructor.DemoAddress;
@@ -258,19 +255,19 @@ FROM AdventureWorks2019.Person.Address;
 SELECT AddressLine1, AddressLine2
 FROM instructor.demoAddress;
 
-SELECT  P.FirstName + ' ' + P.LastName,
-    AddressLine2 = AddressLine1 + ISNULL(' ' + AddressLine2,'')
+SELECT  P.FirstName + ' ' + P.LastName, AddressLine1, AddressLine2,
+   NewAddressLine2 = AddressLine1 + ISNULL(' ' + AddressLine2,'') 
 FROM instructor.demoAddress AS dA
-INNER JOIN Person.BusinessEntityAddress BEA ON dA.AddressID = BEA.AddressID
-INNER JOIN Person.Person P ON P.BusinessEntityID = BEA.BusinessEntityID;
+INNER JOIN AdventureWorks2019.Person.BusinessEntityAddress BEA ON dA.AddressID = BEA.AddressID
+INNER JOIN AdventureWorks2019.Person.Person P ON P.BusinessEntityID = BEA.BusinessEntityID;
  
 
 UPDATE dA
 SET AddressLine1 = P.FirstName + ' ' + P.LastName,
     AddressLine2 = AddressLine1 + ISNULL(' ' + AddressLine2,'')
 FROM instructor.demoAddress AS dA
-INNER JOIN Person.BusinessEntityAddress BEA ON dA.AddressID = BEA.AddressID
-INNER JOIN Person.Person P ON P.BusinessEntityID = BEA.BusinessEntityID;
+INNER JOIN AdventureWorks2019.Person.BusinessEntityAddress BEA ON dA.AddressID = BEA.AddressID
+INNER JOIN AdventureWorks2019.Person.Person P ON P.BusinessEntityID = BEA.BusinessEntityID;
 
 SELECT AddressLine1, AddressLine2
 FROM instructor.demoAddress;
